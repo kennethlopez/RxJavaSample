@@ -1,4 +1,0 @@
-#Tue Dec 19 04:50:00 PHT 2017
-base.0=/Users/kennethlopez/test/RxJavaSample/app/build/intermediates/transforms/dexMerger/debug/19
-path.0=classes.dex
-renamed.0=classes.dex
