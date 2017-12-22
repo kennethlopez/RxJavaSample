@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import com.rxjavasample.data.SyncService;
 import com.rxjavasample.data.manger.SyncManager;
 import com.rxjavasample.data.manger.UserDataManager;
+import com.rxjavasample.data.remote.ApiService;
 import com.rxjavasample.injection.module.AppModule;
 import com.rxjavasample.util.RxBus;
 import com.rxjavasample.view.activity.home.HomePresenterImpl;
@@ -19,7 +20,6 @@ import com.rxjavasample.view.viewholder.DrawerHeaderViewHolder;
 import javax.inject.Singleton;
 
 import dagger.Component;
-import io.realm.Realm;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -41,6 +41,8 @@ public interface AppComponent {
     OkHttpClient okHttpClient();
 
     Retrofit retrofit();
+
+    ApiService apiService();
 
     RxBus rxBus();
 

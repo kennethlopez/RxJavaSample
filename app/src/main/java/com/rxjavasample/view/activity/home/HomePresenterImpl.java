@@ -13,6 +13,7 @@ import com.rxjavasample.util.RxBus;
 
 import javax.inject.Inject;
 
+import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -24,22 +25,20 @@ public class HomePresenterImpl extends HomePresenter {
     transient RxBus mBus;
 
     private static final String TAG = "HomePresenterImpl";
-
-    private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
+    private CompositeDisposable mDisposables = new CompositeDisposable();
 
     HomePresenterImpl(AppComponent appComponent, HomeView view) {
         super(appComponent, view);
         appComponent.inject(this);
 
         getView().disableSearch();
-        getView().startSyncService();
 
-        logPostedEventFromSyncService();
+        subscribeToSyncServiceEvent();
     }
 
     @Override
     protected void onDestroy() {
-        mCompositeDisposable.clear();
+        mDisposables.clear();
 
         super.onDestroy();
     }
@@ -62,25 +61,28 @@ public class HomePresenterImpl extends HomePresenter {
         }
     }
 
-    private void logPostedEventFromSyncService() {
-        // log the posted event from SyncService
-        mCompositeDisposable.add(mBus.filteredObservable(String.class)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(string -> Log.d(TAG, string)));
-    }
-
     private void onClickSearch() {
         String username = getView().getUsername();
 
         if (!mUserDataManager.getDb().hasUser(username)) {
             getView().showProgressDialog(R.string.fetching_user_data_text);
 
-             mCompositeDisposable.add(mUserDataManager.fetchUser(username)
+            mDisposables.add(mUserDataManager.fetchUser(username)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(user -> onNext(), this::onError));
 
         } else getView().startUserListActivity();
+    }
+
+    private void subscribeToSyncServiceEvent() {
+        Flowable<String> stringFlowable = mBus.filteredObservable(String.class);
+        if (stringFlowable != null) {
+            // log the posted event from SyncService
+            mDisposables.add(stringFlowable
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(string -> Log.d(TAG, string)));
+        }
     }
 
     private void onNext() {

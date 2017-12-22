@@ -13,7 +13,6 @@ import javax.inject.Inject;
 
 import io.reactivex.Flowable;
 import io.realm.Realm;
-import io.realm.RealmResults;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import retrofit2.Retrofit;
@@ -22,23 +21,22 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class SyncManager {
     @Inject UserDataManager mUserDataManager;
 
-    private Realm mRealm;
-    private int mUserCount;
+    private final Realm mRealm;
 
     public SyncManager(AppComponent appComponent, Realm realm) {
         appComponent.inject(this);
-
         mRealm = realm;
+        mUserDataManager.setRealm(mRealm);
+
         setApiService();
     }
 
     public Flowable<User> syncUsers() {
-        mUserCount = mUserDataManager.getDb().count(User.class);
-        return mUserDataManager.syncUsers(mRealm);
+        return mUserDataManager.syncUsers();
     }
 
-    public int userCount() {
-        return mUserCount;
+    public int getUsersCount() {
+        return mUserDataManager.getDb().count(User.class);
     }
 
     private void setApiService() {

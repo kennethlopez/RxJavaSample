@@ -15,6 +15,7 @@ import com.rxjavasample.base.App;
 import com.rxjavasample.constants.AppConstants;
 import com.rxjavasample.data.local.UserDb;
 import com.rxjavasample.data.manger.UserDataManager;
+import com.rxjavasample.data.remote.ApiService;
 import com.rxjavasample.util.NetworkUtil;
 import com.rxjavasample.util.RxBus;
 
@@ -25,7 +26,6 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import io.realm.Realm;
 import io.realm.RealmObject;
 import okhttp3.Cache;
 import okhttp3.CacheControl;
@@ -156,12 +156,19 @@ public class AppModule {
 
     @Provides
     @Singleton
+    ApiService provideApiService() {
+        return provideRetrofit()
+                .create(ApiService.class);
+    }
+
+    @Provides
+    @Singleton
     RxBus provideRxBus() {
         return new RxBus();
     }
 
     @Provides
     UserDataManager provideUserDataManager() {
-        return new UserDataManager(provideRetrofit(), new UserDb());
+        return new UserDataManager(provideApiService(), new UserDb());
     }
 }

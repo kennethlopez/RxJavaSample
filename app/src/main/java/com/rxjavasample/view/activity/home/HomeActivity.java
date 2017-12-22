@@ -2,6 +2,7 @@ package com.rxjavasample.view.activity.home;
 
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
@@ -23,9 +24,21 @@ import butterknife.OnTextChanged;
 
 public class HomeActivity extends BaseActivity implements HomeView, View.OnClickListener,
         BaseView.OnTextChangedListener {
+    private static final String EXTRA_TRIGGER_SYNC_FLAG = "HomeActivity.EXTRA_TRIGGER_SYNC_FLAG";
 
     private HomePresenter mPresenter;
     private ProgressDialog mProgressDialog;
+
+    /**
+     * Return an Intent to start this Activity.
+     * triggerDataSyncOnCreate allows disabling the background sync service onCreate. Should
+     * only be set to false during testing.
+     */
+    public static Intent getStartIntent(Context context, boolean triggerDataSyncOnCreate) {
+        Intent intent = new Intent(context, HomeActivity.class);
+        intent.putExtra(EXTRA_TRIGGER_SYNC_FLAG, triggerDataSyncOnCreate);
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +47,10 @@ public class HomeActivity extends BaseActivity implements HomeView, View.OnClick
         ButterKnife.bind(this);
 
         setPresenter();
+
+        if (getIntent().getBooleanExtra(EXTRA_TRIGGER_SYNC_FLAG, true)) {
+            startService(SyncService.getStartIntent(this));
+        }
     }
 
     @Override
@@ -95,12 +112,6 @@ public class HomeActivity extends BaseActivity implements HomeView, View.OnClick
     @Override
     public void toastMessage(int resId) {
         Toast.makeText(this, getString(resId), Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void startSyncService() {
-        AndroidComponentUtil.toggleComponent(this, SyncService.SyncOnConnectionAvailable.class, false);
-        startService(SyncService.getStartIntent(this));
     }
 
     @Override

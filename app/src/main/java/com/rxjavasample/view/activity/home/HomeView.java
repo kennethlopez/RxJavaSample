@@ -19,6 +19,4 @@ public interface HomeView extends BaseView {
     void showConnectionErrorDialog(int resId);
 
     void toastMessage(int resId);
-
-    void startSyncService();
 }

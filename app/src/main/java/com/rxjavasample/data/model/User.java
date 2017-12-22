@@ -31,10 +31,6 @@ public class User extends RealmObject implements UserFields {
     @Expose
     private String type;
 
-    @SerializedName(SITE_ADMIN)
-    @Expose
-    private boolean siteAdmin;
-
     @SerializedName(NAME)
     @Expose
     private String name;
@@ -42,10 +38,6 @@ public class User extends RealmObject implements UserFields {
     @SerializedName(COMPANY)
     @Expose
     private String company;
-
-    @SerializedName(BLOG)
-    @Expose
-    private String blog;
 
     @SerializedName(LOCATION)
     @Expose
@@ -55,10 +47,6 @@ public class User extends RealmObject implements UserFields {
     @Expose
     private int publicRepos;
 
-    @SerializedName(PUBLIC_GIST)
-    @Expose
-    private int publicGists;
-
     @SerializedName(FOLLOWERS)
     @Expose
     private int followers;
@@ -66,14 +54,6 @@ public class User extends RealmObject implements UserFields {
     @SerializedName(FOLLOWING)
     @Expose
     private int following;
-
-    @SerializedName(CREATED_AT)
-    @Expose
-    private String createdAt;
-
-    @SerializedName(UPDATED_AT)
-    @Expose
-    private String updatedAt;
 
     private RealmList<Follower> followersList;
 
@@ -125,14 +105,6 @@ public class User extends RealmObject implements UserFields {
         this.type = type;
     }
 
-    public boolean isSiteAdmin() {
-        return siteAdmin;
-    }
-
-    public void setSiteAdmin(boolean siteAdmin) {
-        this.siteAdmin = siteAdmin;
-    }
-
     public String getName() {
         return name;
     }
@@ -147,14 +119,6 @@ public class User extends RealmObject implements UserFields {
 
     public void setCompany(String company) {
         this.company = company;
-    }
-
-    public String getBlog() {
-        return blog;
-    }
-
-    public void setBlog(String blog) {
-        this.blog = blog;
     }
 
     public String getLocation() {
@@ -173,14 +137,6 @@ public class User extends RealmObject implements UserFields {
         this.publicRepos = publicRepos;
     }
 
-    public int getPublicGists() {
-        return publicGists;
-    }
-
-    public void setPublicGists(int publicGists) {
-        this.publicGists = publicGists;
-    }
-
     public int getFollowers() {
         return followers;
     }
@@ -195,21 +151,5 @@ public class User extends RealmObject implements UserFields {
 
     public void setFollowing(int following) {
         this.following = following;
-    }
-
-    public String getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public String getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(String updatedAt) {
-        this.updatedAt = updatedAt;
     }
 }

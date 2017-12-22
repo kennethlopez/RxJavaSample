@@ -10,6 +10,8 @@ import com.rxjavasample.util.MainUtil;
 
 import javax.inject.Inject;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+
 
 public class UserPresenterImpl extends UserPresenter implements UserView.MenuItemIndexes,
         UserView.FragmentTags {
@@ -27,23 +29,29 @@ public class UserPresenterImpl extends UserPresenter implements UserView.MenuIte
         mToolbarTitles = MainUtil.getStringArray(appComponent.context(),
                 R.array.user_fragment_toolbar_title);
 
-        mUser = mUserDataManager.getDb().getUser(getView().getExtraUserId());
-
         getView().setToolbar();
         getView().initializeNavigationView();
         getView().initializeDrawerHeader();
         getView().setDrawerListener();
         getView().setDrawerHeaderBackground(R.drawable.bg_nav_header, R.mipmap.ic_launcher);
 
-        updateUserFields();
-        loadFragment(FRAGMENT_ABOUT);
+        mUserDataManager.getDb()
+                .getUser(getView().getExtraUserId())
+                .asFlowable()
+                .filter(user -> user.isLoaded())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(user -> {
+                    mUser = (User) user;
+                    updateUserFields();
+                    loadFragment(FRAGMENT_ABOUT);
+                });
     }
 
     @Override
     public void onClick(int viewId) {
         switch (viewId) {
             case R.id.nav_header_user_activity_profile_url:
-                getView().openOnBrowser(mUser.getHtmlUrl());
+                if (mUser != null) getView().openOnBrowser(mUser.getHtmlUrl());
                 break;
         }
     }

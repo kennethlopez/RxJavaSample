@@ -3,15 +3,24 @@ package com.rxjavasample.base;
 
 import com.rxjavasample.data.remote.ApiService;
 
-import retrofit2.Retrofit;
+import javax.annotation.Nonnull;
 
-public class BaseDataManager<T extends BaseDb> {
+import io.realm.Realm;
+
+public abstract class BaseDataManager<T extends BaseDb> {
     private ApiService mApi;
     private T mDb;
 
-    public BaseDataManager(Retrofit retrofit, T db) {
+    public BaseDataManager(ApiService apiService, T db) {
         mDb = db;
-        mApi = retrofit.create(ApiService.class);
+        mApi = apiService;
+    }
+
+    /**
+     * invoke this method when you want to execute queries outside UI thread
+     * */
+    public void setRealm(@Nonnull final Realm realm) {
+        mDb.setRealm(realm);
     }
 
     public T getDb() {
@@ -22,7 +31,7 @@ public class BaseDataManager<T extends BaseDb> {
         mApi = api;
     }
 
-    protected ApiService getApi() {
+    public ApiService getApiService() {
         return mApi;
     }
 }

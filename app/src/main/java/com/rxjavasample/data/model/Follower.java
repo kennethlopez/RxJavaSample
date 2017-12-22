@@ -22,14 +22,6 @@ public class Follower extends RealmObject implements FollowerFields {
     @Expose
     private String avatarUrl;
 
-    @SerializedName(TYPE)
-    @Expose
-    private String type;
-
-    @SerializedName(SITE_ADMIN)
-    @Expose
-    private boolean siteAdmin;
-
     public String getLogin() {
         return login;
     }
@@ -52,21 +44,5 @@ public class Follower extends RealmObject implements FollowerFields {
 
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public boolean isSiteAdmin() {
-        return siteAdmin;
-    }
-
-    public void setSiteAdmin(boolean siteAdmin) {
-        this.siteAdmin = siteAdmin;
     }
 }

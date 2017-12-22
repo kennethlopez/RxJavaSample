@@ -17,12 +17,11 @@ import com.rxjavasample.injection.component.AppComponent;
 import com.rxjavasample.util.AndroidComponentUtil;
 import com.rxjavasample.util.NetworkUtil;
 import com.rxjavasample.util.RxBus;
-import com.rxjavasample.util.RxUtil;
 
 
 import javax.inject.Inject;
 
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.CompositeDisposable;
 import io.realm.Realm;
 
 public class SyncService extends Service {
@@ -32,14 +31,16 @@ public class SyncService extends Service {
     private static final String TAG = "SyncService";
 
     private SyncManager mSyncManager;
-    private Disposable mDisposable;
+    private CompositeDisposable mDisposables = new CompositeDisposable();
     private Realm mRealm;
-    private int mSyncedUserCount = 0;
+    private int mSyncedUsersCount;
+    private int mUsersCount;
 
     public static Intent getStartIntent(Context context) {
         return new Intent(context, SyncService.class);
     }
 
+    @SuppressWarnings("unused")
     public static boolean isRunning(Context context) {
         return AndroidComponentUtil.isServiceRunning(context, SyncService.class);
     }
@@ -70,17 +71,15 @@ public class SyncService extends Service {
     }
 
     public void syncUser(int startId) {
-        RxUtil.dispose(mDisposable);
-        mSyncedUserCount = 0;
+        mSyncedUsersCount = 0;
+        mUsersCount = mSyncManager.getUsersCount();
 
-        mDisposable = mSyncManager.syncUsers()
-                .subscribe(user -> onNext(user, startId), throwable -> onError(throwable, startId));
+        mDisposables.add(mSyncManager.syncUsers()
+                .subscribe(user -> onNext(user, startId), throwable -> onError(throwable, startId)));
     }
 
     private void onNext(User user, int startId) {
-        mSyncedUserCount++;
         Log.i(TAG, "Synced " + user.getLogin());
-
         onComplete(startId);
     }
 
@@ -90,20 +89,27 @@ public class SyncService extends Service {
         stopSelf(startId);
     }
 
+    /**
+     * needs to be invoked inside onNext().
+     * we resorted to manually counting the emitted values because for some reason the onComplete() is not invoked
+     * after all the values has been emitted.
+     * */
     private void onComplete(int startId) {
-        if (mSyncedUserCount == mSyncManager.userCount()) {
+        mSyncedUsersCount++;
+        if (mSyncedUsersCount == mUsersCount) {
             Log.i(TAG, "Synced successfully!");
-            stopSelf(startId);
 
             // post a sample event to try RxBus
             mBus.post("Synced all users successfully!");
+
+            stopSelf(startId);
         }
     }
 
     @Override
     public void onDestroy() {
         mRealm.close();
-        RxUtil.dispose(mDisposable);
+        mDisposables.clear();
 
         super.onDestroy();
     }

@@ -39,4 +39,9 @@ public class App extends Application {
     public AppComponent getAppComponent() {
         return mAppComponent;
     }
+
+    // Needed to replace the component with a test specific one
+    public void setComponent(AppComponent applicationComponent) {
+        mAppComponent = applicationComponent;
+    }
 }
