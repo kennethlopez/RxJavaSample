@@ -1,17 +1,17 @@
 package com.rxjavasample.view.activity.user;
 
 
-
 import com.rxjavasample.R;
 import com.rxjavasample.data.manger.UserDataManager;
 import com.rxjavasample.data.model.User;
 import com.rxjavasample.injection.component.AppComponent;
 import com.rxjavasample.util.MainUtil;
+import com.rxjavasample.util.RxUtil;
 
 import javax.inject.Inject;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 
 
 public class UserPresenterImpl extends UserPresenter implements UserView.MenuItemIndexes,
@@ -19,7 +19,7 @@ public class UserPresenterImpl extends UserPresenter implements UserView.MenuIte
     @Inject
     transient UserDataManager mUserDataManager;
 
-    private CompositeDisposable mDisposables = new CompositeDisposable();
+    private Disposable mDisposable;
     private final String[] mToolbarTitles;
     private User mUser;
     private String mFragmentTag = "";
@@ -37,21 +37,21 @@ public class UserPresenterImpl extends UserPresenter implements UserView.MenuIte
         getView().setDrawerListener();
         getView().setDrawerHeaderBackground(R.drawable.bg_nav_header, R.mipmap.ic_launcher);
 
-        mDisposables.add(mUserDataManager.getDb()
-                .getUser(getView().getExtraUserId())
+        mDisposable = mUserDataManager.getDb()
+                .getUserAsync(getView().getExtraUserId())
                 .asFlowable()
                 .filter(user -> user.isLoaded())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(user -> {
-                    mUser = (User) user;
-                    updateUserFields();
+                .subscribe(realmObject -> {
+                    mUser = (User) realmObject;
+                    updateUserFields(mUser);
                     loadFragment(FRAGMENT_ABOUT);
-                }));
+                });
     }
 
     @Override
     protected void onDestroy() {
-        mDisposables.clear();
+        RxUtil.dispose(mDisposable);
 
         super.onDestroy();
     }
@@ -102,10 +102,10 @@ public class UserPresenterImpl extends UserPresenter implements UserView.MenuIte
         return true;
     }
 
-    private void updateUserFields() {
-        getView().setDrawerHeaderName(mUser.getName());
-        getView().setDrawerHeaderProfilePic(mUser.getAvatarUrl(), R.drawable.ic_person_black_24dp);
-        getView().setDrawerHeaderProfileUrl(mUser.getHtmlUrl());
+    private void updateUserFields(final User user) {
+        getView().setDrawerHeaderName(user.getName());
+        getView().setDrawerHeaderProfilePic(user.getAvatarUrl(), R.drawable.ic_person_black_24dp);
+        getView().setDrawerHeaderProfileUrl(user.getHtmlUrl());
     }
 
     private void loadFragment(String fragmentTag) {

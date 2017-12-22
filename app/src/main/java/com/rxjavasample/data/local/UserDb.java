@@ -9,10 +9,10 @@ import io.realm.Case;
 
 public class UserDb extends BaseDb<User> implements UserFields {
 
-    public User getUser(final int userId) {
+    public User getUserAsync(final int userId) {
         return getRealm().where(User.class)
                 .equalTo(ID, userId)
-                .findFirst();
+                .findFirstAsync();
     }
 
     public boolean hasUser(final String username) {
