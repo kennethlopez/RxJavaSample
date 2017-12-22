@@ -11,6 +11,7 @@ import com.rxjavasample.util.MainUtil;
 import javax.inject.Inject;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 
 
 public class UserPresenterImpl extends UserPresenter implements UserView.MenuItemIndexes,
@@ -18,6 +19,7 @@ public class UserPresenterImpl extends UserPresenter implements UserView.MenuIte
     @Inject
     transient UserDataManager mUserDataManager;
 
+    private CompositeDisposable mDisposables = new CompositeDisposable();
     private final String[] mToolbarTitles;
     private User mUser;
     private String mFragmentTag = "";
@@ -35,7 +37,7 @@ public class UserPresenterImpl extends UserPresenter implements UserView.MenuIte
         getView().setDrawerListener();
         getView().setDrawerHeaderBackground(R.drawable.bg_nav_header, R.mipmap.ic_launcher);
 
-        mUserDataManager.getDb()
+        mDisposables.add(mUserDataManager.getDb()
                 .getUser(getView().getExtraUserId())
                 .asFlowable()
                 .filter(user -> user.isLoaded())
@@ -44,7 +46,14 @@ public class UserPresenterImpl extends UserPresenter implements UserView.MenuIte
                     mUser = (User) user;
                     updateUserFields();
                     loadFragment(FRAGMENT_ABOUT);
-                });
+                }));
+    }
+
+    @Override
+    protected void onDestroy() {
+        mDisposables.clear();
+
+        super.onDestroy();
     }
 
     @Override
