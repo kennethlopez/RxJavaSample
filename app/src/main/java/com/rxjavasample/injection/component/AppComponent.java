@@ -11,10 +11,10 @@ import com.rxjavasample.data.manger.UserDataManager;
 import com.rxjavasample.data.remote.ApiService;
 import com.rxjavasample.injection.module.AppModule;
 import com.rxjavasample.util.RxBus;
-import com.rxjavasample.view.activity.home.HomePresenterImpl;
-import com.rxjavasample.view.activity.user.UserPresenterImpl;
-import com.rxjavasample.view.activity.userlist.UserListPresenterImpl;
-import com.rxjavasample.view.fragment.about.AboutPresenterImpl;
+import com.rxjavasample.view.activity.home.HomePresenter;
+import com.rxjavasample.view.activity.user.UserPresenter;
+import com.rxjavasample.view.activity.userlist.UserListPresenter;
+import com.rxjavasample.view.fragment.about.AboutPresenter;
 import com.rxjavasample.view.viewholder.DrawerHeaderViewHolder;
 
 import javax.inject.Singleton;
@@ -48,15 +48,15 @@ public interface AppComponent {
 
     UserDataManager userDataManager();
 
-    void inject(HomePresenterImpl homePresenter);
+    void inject(HomePresenter homePresenter);
 
-    void inject(UserListPresenterImpl userListPresenter);
+    void inject(UserListPresenter userListPresenter);
 
-    void inject(UserPresenterImpl userPresenter);
+    void inject(UserPresenter userPresenter);
 
     void inject(DrawerHeaderViewHolder viewHolder);
 
-    void inject(AboutPresenterImpl aboutPresenter);
+    void inject(AboutPresenter aboutPresenter);
 
     void inject(SyncManager syncManager);
 

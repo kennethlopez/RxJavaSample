@@ -48,6 +48,7 @@ public class DrawerHeaderViewHolder implements View.OnClickListener {
                 .apply(RequestOptions.circleCropTransform())
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .error(placeHolderResId)
+                .placeholder(placeHolderResId)
                 .into(mProfilePic);
     }
 

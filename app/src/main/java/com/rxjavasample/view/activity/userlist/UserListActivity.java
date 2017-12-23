@@ -21,7 +21,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.OrderedRealmCollection;
 
-public class UserListActivity extends BaseActivity implements UserListView {
+public class UserListActivity extends BaseActivity implements UserListContract.View {
     private UserListPresenter mPresenter;
     private UserListAdapter mAdapter;
 
@@ -36,7 +36,7 @@ public class UserListActivity extends BaseActivity implements UserListView {
 
     @Override
     public void setPresenter() {
-        super.setPresenter(mPresenter = new UserListPresenterImpl(getComponent(), this));
+        super.setPresenter(mPresenter = new UserListPresenter(getComponent(), this));
     }
 
     @Override

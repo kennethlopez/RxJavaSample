@@ -26,7 +26,7 @@ import com.rxjavasample.view.viewholder.DrawerHeaderViewHolder;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class UserActivity extends BaseActivity implements UserView {
+public class UserActivity extends BaseActivity implements UserContract.View {
     private UserPresenter mPresenter;
     private DrawerHeaderViewHolder mDrawerHeader;
     private Handler mHandler = new Handler();
@@ -45,15 +45,15 @@ public class UserActivity extends BaseActivity implements UserView {
     }
 
     @Override
+    public void setPresenter() {
+        super.setPresenter(mPresenter = new UserPresenter(getComponent(), this));
+    }
+
+    @Override
     public void onBackPressed() {
         if (mPresenter.onBackPressed()) {
             super.onBackPressed();
         }
-    }
-
-    @Override
-    public void setPresenter() {
-        super.setPresenter(mPresenter = new UserPresenterImpl(getComponent(), this));
     }
 
     @Override

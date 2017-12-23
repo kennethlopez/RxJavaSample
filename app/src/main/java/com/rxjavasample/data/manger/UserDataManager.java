@@ -23,11 +23,6 @@ public class UserDataManager extends BaseDataManager<UserDb> {
     }
 
     public Flowable<User> syncUsers() {
-//        return getDb().getAllAsRealmResultsAsync(User.class)
-//                .asFlowable()
-//                .filter(RealmResults::isLoaded)
-//                .switchMap(Flowable::fromIterable)
-//                .flatMap(user -> fetchUser(user.getLogin()));
         return getDb().getAllAsList(User.class)
                 .switchMap(Flowable::fromIterable)
                 .flatMap(user -> fetchUser(user.getLogin()));

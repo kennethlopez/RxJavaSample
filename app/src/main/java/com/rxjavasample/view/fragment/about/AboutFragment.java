@@ -22,7 +22,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class AboutFragment extends BaseFragment implements AboutView, View.OnClickListener {
+public class AboutFragment extends BaseFragment implements AboutContract.View, View.OnClickListener {
     private AboutPresenter mPresenter;
 
     public static AboutFragment newInstance(int userId) {
@@ -48,7 +48,7 @@ public class AboutFragment extends BaseFragment implements AboutView, View.OnCli
 
     @Override
     public void setPresenter() {
-        super.setPresenter(mPresenter = new AboutPresenterImpl(getComponent(), this));
+        super.setPresenter(mPresenter = new AboutPresenter(getComponent(), this));
     }
 
     @OnClick(R.id.fragment_about_profile_url)
@@ -65,6 +65,7 @@ public class AboutFragment extends BaseFragment implements AboutView, View.OnCli
                 .apply(RequestOptions.circleCropTransform())
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .error(R.drawable.ic_person_black_24dp)
+                .placeholder(R.drawable.ic_person_black_24dp)
                 .into(mProfilePic);
     }
 

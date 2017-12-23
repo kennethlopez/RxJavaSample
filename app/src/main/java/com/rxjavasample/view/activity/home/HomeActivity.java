@@ -14,7 +14,6 @@ import com.rxjavasample.R;
 import com.rxjavasample.base.BaseActivity;
 import com.rxjavasample.base.BaseView;
 import com.rxjavasample.data.SyncService;
-import com.rxjavasample.util.AndroidComponentUtil;
 import com.rxjavasample.view.activity.userlist.UserListActivity;
 
 import butterknife.BindView;
@@ -22,7 +21,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
 
-public class HomeActivity extends BaseActivity implements HomeView, View.OnClickListener,
+public class HomeActivity extends BaseActivity implements HomeContract.View, View.OnClickListener,
         BaseView.OnTextChangedListener {
     private static final String EXTRA_TRIGGER_SYNC_FLAG = "HomeActivity.EXTRA_TRIGGER_SYNC_FLAG";
 
@@ -34,7 +33,7 @@ public class HomeActivity extends BaseActivity implements HomeView, View.OnClick
      * triggerDataSyncOnCreate allows disabling the background sync service onCreate. Should
      * only be set to false during testing.
      */
-    public static Intent getStartIntent(Context context, boolean triggerDataSyncOnCreate) {
+    public static Intent getStartIntent(Context context, @SuppressWarnings("SameParameterValue") boolean triggerDataSyncOnCreate) {
         Intent intent = new Intent(context, HomeActivity.class);
         intent.putExtra(EXTRA_TRIGGER_SYNC_FLAG, triggerDataSyncOnCreate);
         return intent;
@@ -55,7 +54,7 @@ public class HomeActivity extends BaseActivity implements HomeView, View.OnClick
 
     @Override
     public void setPresenter() {
-        super.setPresenter(mPresenter = new HomePresenterImpl(getComponent(), this));
+        super.setPresenter(mPresenter = new HomePresenter(getComponent(), this));
     }
 
     @OnClick(R.id.activity_main_search)
@@ -99,9 +98,7 @@ public class HomeActivity extends BaseActivity implements HomeView, View.OnClick
 
     @Override
     public void hideProgressDialog() {
-        if (mProgressDialog != null) {
-            mProgressDialog.dismiss();
-        }
+        if (mProgressDialog != null) mProgressDialog.dismiss();
     }
 
     @Override

@@ -21,6 +21,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         mComponent = DaggerActivityComponent.builder()
                 .appComponent(getApp().getAppComponent())
                 .build();
+        RealmManager.incrementCount();
     }
 
     @Override
@@ -29,7 +30,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (mPresenter != null) {
             mPresenter.onStart();
         }
-        RealmManager.incrementCount();
     }
 
     @Override

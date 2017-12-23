@@ -91,8 +91,7 @@ public class SyncService extends Service {
 
     /**
      * needs to be invoked inside onNext().
-     * we resorted to manually counting the emitted values because for some reason the onComplete() is not invoked
-     * after all the values has been emitted.
+     * we resorted to manually counting the emitted values because for some reason the onComplete() is not invoked after all the values has been emitted.
      * */
     private void onComplete(int startId) {
         mSyncedUsersCount++;
